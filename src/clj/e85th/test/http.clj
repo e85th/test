@@ -51,25 +51,27 @@
   response->tuple
   (juxt :status json-response-body-as-edn :headers))
 
-(defn make-api-call-fn
-  "Returns a function that can be used to make api-calls with the request-processor-fn
-   applied to a request right before it hits the endpoint. The response-processor-fn
-   is used to process the response. NB. This just calls the routes handler function set
-   during init to this namespace. The returned function has 3 arities.
+(defn make-api-caller
+  "Returns a function that can be used to make api-calls with the request-modifier
+   applied to a request right before it hits the endpoint. The response-processor
+   is used to process the response. NB. The returned function has 3 arities.
    [request]
    [method :- s/Keyword uri :- s/Str]
    [method :- s/Keyword uri :- s/Str params :- {s/Keyword s/Any}]"
-  [request-processor-fn response-processor-fn]
-  (fn f
-    ([request]
-     (response-processor-fn (routes (request-processor-fn request))))
-    ([method uri]
-     (f (json-request method uri)))
-    ([method uri params]
-     (f (json-request method uri params)))))
+  ([request-modifier]
+   (make-api-caller request-modifier response->tuple))
+
+  ([request-modifier response-processor]
+   (fn f
+     ([request]
+      (response-processor (routes (request-modifier request))))
+     ([method uri]
+      (f (json-request method uri)))
+     ([method uri params]
+      (f (json-request method uri params))))))
 
 (def ^{:doc "Calls an endpoint and returns the .
              The status-code is an int, response-body is a Clojure data structure.
              Executes a json request to the api endpoint.
              eg: (api-call :get \"/foo\" {:a 1 :b 2})"}
-  api-call (make-api-call-fn identity response->tuple))
+  api-call (make-api-caller identity))
