@@ -1,4 +1,4 @@
-(defproject e85th/test "0.1.0-SNAPSHOT"
+(defproject e85th/test "0.1.0"
   :description "Testing related utilities."
   :url "http://github.com/e85th/test"
   :license {:name "Apache License 2.0"
