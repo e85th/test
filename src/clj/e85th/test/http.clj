@@ -35,7 +35,8 @@
   ([method uri params headers]
    (assert (keyword? method))
    (assert (string? uri))
-   (assert (map? params))
+   (assert (or (map? params)
+               (sequential? params)))
    (assert (map? headers))
    (let [params (if (= :get method) params (json/generate-string params))]
      (-> (mock/request method uri params)
