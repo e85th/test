@@ -132,7 +132,7 @@
   ;; Check for InputStream because api-call uses the routes directly and serialization
   ;; doesn't happen in testing with undertow anyway
   (let [body (if (instance? InputStream body) (slurp body) body)]
-    (edn/read-string body)))
+    (edn/read-string {:readers *data-readers*} body)))
 
 (defn transit-response-body-as-edn
   "Parse the ring response's body and return it as a Clojure data structure."
