@@ -46,7 +46,7 @@
 
 (task-options!
  pom {:project 'e85th/test
-      :version "0.1.5"
+      :version "0.1.6"
       :description "Testing related utilities."
       :url "http://github.com/e85th/test"
       :scm {:url "http://github.com/e85th/test"}
