@@ -69,6 +69,7 @@
    (let [params (if (= :get method) params (json/generate-string params))]
      (-> (mock/request method uri params)
          (mock/content-type "application/json")
+         (mock/header "Accept" "application/json")
          (update-in [:headers] merge headers)))))
 
 (defn edn-request
@@ -86,6 +87,7 @@
    (let [params (if (= :get method) params (pr-str params))]
      (-> (mock/request method uri params)
          (mock/content-type "application/edn")
+         (mock/header "Accept" "application/edn")
          (update-in [:headers] merge headers)))))
 
 (defn transit-encode
@@ -116,6 +118,7 @@
    (let [params (if (= :get method) params (transit-encode params))]
      (-> (mock/request method uri params)
          (mock/content-type "application/transit+json")
+         (mock/header "Accept" "application/transit+json")
          (update-in [:headers] merge headers)))))
 
 (defn json-response-body-as-edn

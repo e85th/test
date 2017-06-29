@@ -1,6 +1,6 @@
 (set-env!
  :resource-paths #{"src/clj"}
- :dependencies '[[org.clojure/clojure "1.9.0-alpha15" :scope "provided"]
+ :dependencies '[[org.clojure/clojure "1.9.0-alpha17" :scope "provided"]
                  [ring/ring-mock "0.3.0"]
                  [cheshire "5.7.1"]
                  [com.cognitect/transit-clj "0.8.300"]
