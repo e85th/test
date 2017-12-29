@@ -2,6 +2,7 @@
   (:require [e85th.test.util :as u]
             [ring.mock.request :as mock]
             [cognitect.transit :as transit]
+            [io.pedestal.test :as test]
             [clojure.edn :as edn]
             [clojure.string :as str]
             [cheshire.core :as json])
@@ -194,3 +195,32 @@
    (make-transit-api-caller identity))
   ([request-modifier]
    (make-api-caller transit-request request-modifier transit-response->tuple)))
+
+
+(defn pedestal-service-caller
+  "Returns a function that accepts verb url params and headers"
+  [base-headers serializer deserializer service-fn]
+  (fn [verb url params headers]
+    (let [body (some-> params serializer)
+          resp (test/response-for service-fn verb url
+                                  :body body :headers (merge base-headers headers))]
+      (update resp :body (fnil deserializer "")))))
+
+(defn json-pedestal-caller
+  [service-fn]
+  (pedestal-service-caller
+   {"Accept" "application/json"
+    "Content-Type" "application/json"}
+   json/generate-string
+   #(json/parse-string % true)
+   service-fn))
+
+
+(defn edn-pedestal-caller
+  [service-fn]
+  (pedestal-service-caller
+   {"Accept" "application/edn"
+    "Content-Type" "application/edn"}
+   pr-str
+   #(edn/read-string {:readers *data-readers*} %)
+   service-fn))
