@@ -207,13 +207,15 @@
       (update resp :body (fnil deserializer "")))))
 
 (defn json-pedestal-caller
-  [service-fn]
-  (pedestal-service-caller
-   {"Accept" "application/json"
-    "Content-Type" "application/json"}
-   json/generate-string
-   #(json/parse-string % true)
-   service-fn))
+  ([service-fn]
+   (json-pedestal-caller service-fn {}))
+  ([service-fn {:keys [key-fn] :or {key-fn keyword} :as opts}]
+   (pedestal-service-caller
+    {"Accept" "application/json"
+     "Content-Type" "application/json"}
+    json/generate-string
+    #(json/parse-string % key-fn)
+    service-fn)))
 
 
 (defn edn-pedestal-caller
